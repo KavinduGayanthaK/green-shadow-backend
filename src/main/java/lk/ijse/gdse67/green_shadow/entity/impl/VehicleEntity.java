@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "vehicle")
 public class VehicleEntity {
     @Id
     private String licensePlateNumber;
