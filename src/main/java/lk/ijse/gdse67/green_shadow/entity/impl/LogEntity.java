@@ -1,6 +1,7 @@
 package lk.ijse.gdse67.green_shadow.entity.impl;
 
 import jakarta.persistence.*;
+import lk.ijse.gdse67.green_shadow.entity.SuperEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "log")
-public class LogEntity {
+public class LogEntity implements SuperEntity {
     @Id
     private String logCode;
     private String logDetail;

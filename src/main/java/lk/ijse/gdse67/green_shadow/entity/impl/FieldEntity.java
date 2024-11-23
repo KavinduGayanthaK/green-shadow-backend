@@ -1,6 +1,7 @@
 package lk.ijse.gdse67.green_shadow.entity.impl;
 
 import jakarta.persistence.*;
+import lk.ijse.gdse67.green_shadow.entity.SuperEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "field")
-public class FieldEntity {
+public class FieldEntity implements SuperEntity {
     @Id
     private String fieldCode;
     private String fieldName;

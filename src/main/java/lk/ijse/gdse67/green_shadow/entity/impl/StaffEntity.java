@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lk.ijse.gdse67.green_shadow.Enum.Designation;
 import lk.ijse.gdse67.green_shadow.Enum.Gender;
 import lk.ijse.gdse67.green_shadow.Enum.Role;
+import lk.ijse.gdse67.green_shadow.entity.SuperEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "staff")
-public class StaffEntity {
+public class StaffEntity implements SuperEntity {
     @Id
     private String staffId;
     private String firstName;

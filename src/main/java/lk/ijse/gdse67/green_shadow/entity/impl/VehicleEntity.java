@@ -3,6 +3,7 @@ package lk.ijse.gdse67.green_shadow.entity.impl;
 import jakarta.persistence.*;
 import lk.ijse.gdse67.green_shadow.Enum.VehicleFuelType;
 import lk.ijse.gdse67.green_shadow.Enum.VehicleStatus;
+import lk.ijse.gdse67.green_shadow.entity.SuperEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name = "vehicle")
-public class VehicleEntity {
+public class VehicleEntity implements SuperEntity {
     @Id
     private String licensePlateNumber;
     private String category;
