@@ -6,5 +6,8 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface FieldService extends Serializable {
+    String generateFieldCode();
+    List<FieldDTO> getAllField();
 
+    void saveField(FieldDTO fieldDTO);
 }

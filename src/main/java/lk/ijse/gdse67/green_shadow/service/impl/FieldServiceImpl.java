@@ -18,4 +18,36 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FieldServiceImpl implements FieldService {
 
+    private final Mapping mapping;
+
+    private final FieldDao fieldDao;
+
+    @Override
+    public String generateFieldCode() {
+        FieldEntity lastField = fieldDao.findLastFieldCode();
+
+        if (lastField != null) {
+            String lastFieldCode = lastField.getFieldCode();
+            try {
+                int lastNumber = Integer.parseInt(lastFieldCode.replace("FIELD-", ""));
+                return String.format("FIELD-%03d", lastNumber + 1);
+            } catch (NumberFormatException e) {
+                throw new IllegalStateException("Invalid field code format: " + lastFieldCode, e);
+            }
+        } else {
+            return "FIELD-001";
+        }
+    }
+
+
+    @Override
+    public List<FieldDTO> getAllField() {
+        return mapping.toFieldDTO(fieldDao.findAll());
+    }
+
+    @Override
+    public void saveField(FieldDTO fieldDTO) {
+        System.out.println("Enter fieldService");
+        fieldDao.save(mapping.toFieldEntity(fieldDTO));
+    }
 }

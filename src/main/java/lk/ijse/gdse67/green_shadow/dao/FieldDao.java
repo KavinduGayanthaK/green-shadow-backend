@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FieldDao extends JpaRepository<FieldEntity,String> {
 
-
+    @Query("SELECT f FROM FieldEntity f WHERE f.fieldCode LIKE 'FIELD-%' ORDER BY CAST(SUBSTRING(f.fieldCode, 7) AS int) DESC LIMIT 1")
+    FieldEntity findLastFieldCode();
 
 }
