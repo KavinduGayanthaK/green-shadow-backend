@@ -19,7 +19,12 @@ public class EquipmentEntity {
     private String equipmentName;
     private String Type;
     private String status;
-    @ManyToMany(mappedBy = "equipments")
+
+
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @JoinTable(name = "field_equipment_details",
+            joinColumns = @JoinColumn(name = "equipment_id"),
+            inverseJoinColumns = @JoinColumn(name = "field_code"))
     private List<FieldEntity> fields = new ArrayList<>();
 
     @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
