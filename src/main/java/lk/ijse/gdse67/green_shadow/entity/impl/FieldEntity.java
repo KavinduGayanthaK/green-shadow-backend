@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.cache.interceptor.CacheAspectSupport;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,9 +19,11 @@ public class FieldEntity {
     @Id
     private String fieldCode;
     private String fieldName;
-    private String location;
+    private Point location;
     private String extendSizeOfField;
+    @Column(columnDefinition = "LONGTEXT")
     private String image1;
+    @Column(columnDefinition = "LONGTEXT")
     private String image2;
     @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinTable(name = "field_crop_details",
@@ -31,10 +34,7 @@ public class FieldEntity {
     @ManyToMany(mappedBy = "fields")
     private List<LogEntity> logs = new ArrayList<>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
-    @JoinTable(name = "field_equipment_details",
-               joinColumns = @JoinColumn(name = "field_code"),
-                inverseJoinColumns = @JoinColumn(name = "equipment_id"))
+    @ManyToMany(mappedBy = "fields")
     private List<EquipmentEntity> equipments = new ArrayList<>();
 
     @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
