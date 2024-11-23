@@ -1,9 +1,6 @@
 package lk.ijse.gdse67.green_shadow.entity.impl;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +22,7 @@ public class CropEntity {
 
     @ManyToMany(mappedBy = "crops")
     private List<FieldEntity> fields;
+    @Column(columnDefinition = "LONGTEXT")
     private String cropImage;
 
     @ManyToMany(mappedBy = "crop")
