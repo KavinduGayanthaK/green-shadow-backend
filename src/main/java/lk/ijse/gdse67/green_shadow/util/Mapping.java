@@ -11,12 +11,14 @@ import lk.ijse.gdse67.green_shadow.entity.impl.CropEntity;
 import lk.ijse.gdse67.green_shadow.entity.impl.FieldEntity;
 import lk.ijse.gdse67.green_shadow.entity.impl.StaffEntity;
 import lk.ijse.gdse67.green_shadow.exception.NotFoundException;
+import lk.ijse.gdse67.green_shadow.service.CropService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,13 +37,6 @@ public class Mapping {
         this.modelMapper = modelMapper;
     }
 
-    public List<FieldDTO> toFieldDTO(List<FieldEntity> fieldEntities) {
-        return modelMapper.map(fieldEntities,new TypeToken<List<FieldDTO>>() {}.getType());
-    }
-
-    public List<CropDTO> toCropDTO(List<CropEntity> cropEntities) {
-        return modelMapper.map(cropEntities,new TypeToken<List<CropDTO>>() {}.getType());
-    }
 
     public FieldEntity toFieldEntity(FieldDTO fieldDTO) {
         FieldEntity fieldEntity = new FieldEntity();
@@ -57,6 +52,49 @@ public class Mapping {
                 staffDao.findById(saffId).orElseThrow(()->new NotFoundException("Staff not found : "+saffId))).toList());
 
         return fieldEntity;
+    }
+
+    public List<FieldDTO> toGetAllFieldDTO(List<FieldEntity> fieldEntities) {
+        List<FieldDTO> dtoList = new ArrayList<>();
+
+        fieldEntities.forEach(fieldEntity -> {
+            FieldDTO fieldDTO = new FieldDTO(
+                    fieldEntity.getFieldCode(),
+                    fieldEntity.getFieldName(),
+                    fieldEntity.getLocation(),
+                    fieldEntity.getExtendSizeOfField(),
+                    fieldEntity.getImage1(),
+                    fieldEntity.getImage2(),
+                    fieldEntity.getCrops().stream()
+                            .map(CropEntity::getCropCode)
+                            .toList(),
+                    fieldEntity.getStaffs().stream()
+                            .map(StaffEntity::getStaffId)
+                            .toList()
+            );
+            dtoList.add(fieldDTO);
+        });
+
+        return dtoList;
+    }
+
+    public List<CropDTO> toGetAllCropDTO(List<CropEntity> cropEntities) {
+        List<CropDTO> cropDTOS = new ArrayList<>();
+
+        cropEntities.forEach(cropEntity->{
+            CropDTO cropDTO = new CropDTO(
+                    cropEntity.getCropCode(),
+                    cropEntity.getCommonName(),
+                    cropEntity.getScientificName(),
+                    cropEntity.getCropCategory(),
+                    cropEntity.getCropSeason(),
+                    cropEntity.getFields().stream().map(FieldEntity::getFieldCode)
+                            .toList(),
+                    cropEntity.getCropImage()
+            );
+            cropDTOS.add(cropDTO);
+        });
+      return cropDTOS;
     }
 
     public CropEntity  toCropEntity(CropDTO cropDTO) {
