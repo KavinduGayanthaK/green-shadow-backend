@@ -5,8 +5,6 @@ import lk.ijse.gdse67.green_shadow.dto.FieldDTO;
 import lk.ijse.gdse67.green_shadow.entity.impl.FieldEntity;
 import lk.ijse.gdse67.green_shadow.service.FieldService;
 import lk.ijse.gdse67.green_shadow.util.Mapping;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,12 +40,11 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public List<FieldDTO> getAllField() {
-        return mapping.toFieldDTO(fieldDao.findAll());
+        return mapping.toGetAllFieldDTO(fieldDao.findAll());
     }
 
     @Override
     public void saveField(FieldDTO fieldDTO) {
-        System.out.println("Enter fieldService");
-        fieldDao.save(mapping.toFieldEntity(fieldDTO));
+      fieldDao.save(mapping.toFieldEntity(fieldDTO));
     }
 }

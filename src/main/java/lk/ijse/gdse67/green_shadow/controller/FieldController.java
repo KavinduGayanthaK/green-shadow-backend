@@ -48,8 +48,8 @@ public class FieldController {
             fieldDTO.setExtendSizeOfField(extendSizeOfField);
             fieldDTO.setCrops(fieldsCrop);
             fieldDTO.setStaff(fieldStaff);
-            fieldDTO.setImage1(appUtil.generateFieldImage(fieldImage1));
-            fieldDTO.setImage2(appUtil.generateFieldImage(fieldImage2));
+            fieldDTO.setImage1(appUtil.generateImage(fieldImage1));
+            fieldDTO.setImage2(appUtil.generateImage(fieldImage2));
             fieldService.saveField(fieldDTO);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (DataPersistException e) {
@@ -60,8 +60,13 @@ public class FieldController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<FieldDTO> getAllFields() {
-        System.out.println(fieldService.getAllField());
-        return fieldService.getAllField();
+    public ResponseEntity<?> getAllFields() {
+        try{
+            return ResponseEntity.ok(fieldService.getAllField());
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal server error | crop details fetch unsuccessfully.\nMore Reason\n"+e);
+        }
+
     }
 }
