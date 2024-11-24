@@ -1,18 +1,22 @@
 package lk.ijse.gdse67.green_shadow.service.impl;
 
 import lk.ijse.gdse67.green_shadow.dao.CropDao;
+import lk.ijse.gdse67.green_shadow.dto.CropDTO;
 import lk.ijse.gdse67.green_shadow.entity.impl.CropEntity;
 import lk.ijse.gdse67.green_shadow.service.CropService;
+import lk.ijse.gdse67.green_shadow.util.Mapping;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.sql.rowset.CachedRowSet;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CropServiceImpl implements CropService {
 
     private final CropDao cropDao;
+    private final Mapping mapping;
     @Override
     public String generateCropCode() {
         CropEntity lastCrop =cropDao.findLastCropCode();
@@ -29,4 +33,13 @@ public class CropServiceImpl implements CropService {
             return "CROP-001";
         }
     }
+
+    @Override
+    public void saveCrop(CropDTO cropDTO) {
+        cropDao.save(mapping.toCropEntity(cropDTO));
+    }
+
+
+
+
 }
