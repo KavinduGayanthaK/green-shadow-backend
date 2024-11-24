@@ -30,11 +30,11 @@ public class AppUtil {
     public String generateCropCode() {
         return cropService.generateCropCode();
     }
-    public String generateFieldImage(MultipartFile fieldImage) throws IOException {
-        if (fieldImage == null || fieldImage.isEmpty()) {
+    public String generateImage(MultipartFile image) throws IOException {
+        if (image == null || image.isEmpty()) {
             return null;
         }
-        byte[] byteImage = fieldImage.getBytes();
+        byte[] byteImage = image.getBytes();
         return Base64.getEncoder().encodeToString(byteImage);
     }
 
