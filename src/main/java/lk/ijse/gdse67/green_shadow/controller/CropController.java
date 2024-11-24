@@ -51,4 +51,9 @@ public class CropController {
 
     }
 
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CropDTO> getAllCrop() {
+        return cropService.getAllCrop();
+    }
+
 }

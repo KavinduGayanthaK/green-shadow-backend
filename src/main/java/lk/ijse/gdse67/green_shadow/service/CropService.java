@@ -8,5 +8,5 @@ import java.util.List;
 public interface CropService extends Serializable {
     String generateCropCode();
     void saveCrop(CropDTO cropDTO);
-
+    List<CropDTO> getAllCrop();
 }

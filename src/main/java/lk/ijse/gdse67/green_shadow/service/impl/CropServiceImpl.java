@@ -39,7 +39,10 @@ public class CropServiceImpl implements CropService {
         cropDao.save(mapping.toCropEntity(cropDTO));
     }
 
-
+    @Override
+    public List<CropDTO> getAllCrop() {
+        return mapping.toCropDTO(cropDao.findAll());
+    }
 
 
 }
