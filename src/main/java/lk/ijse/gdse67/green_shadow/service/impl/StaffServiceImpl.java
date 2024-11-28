@@ -10,6 +10,8 @@ import lk.ijse.gdse67.green_shadow.util.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class StaffServiceImpl implements StaffService {
     private final StaffDao staffDao;
@@ -18,7 +20,7 @@ public class StaffServiceImpl implements StaffService {
 
 
     @Autowired
-    public StaffServiceImpl(StaffDao staffDao, EquipmentDao equipmentDao, StaffEquipmentDetailsDao equipmentDetailsDao, Mapping mapping) {
+    public StaffServiceImpl(StaffDao staffDao,  Mapping mapping) {
         this.staffDao = staffDao;
 
         this.mapping = mapping;
@@ -46,5 +48,11 @@ public class StaffServiceImpl implements StaffService {
         }
     }
 
+
+    @Override
+    public List<StaffDTO> getAllStaff() {
+        System.out.println(staffDao.findAll());
+        return mapping.toGetAllStaffDTO(staffDao.findAll());
+    }
 
 }

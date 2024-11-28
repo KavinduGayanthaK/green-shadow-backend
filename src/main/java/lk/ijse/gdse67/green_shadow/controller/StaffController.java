@@ -1,5 +1,4 @@
 package lk.ijse.gdse67.green_shadow.controller;
-
 import lk.ijse.gdse67.green_shadow.dto.StaffDTO;
 import lk.ijse.gdse67.green_shadow.exception.DataPersistException;
 import lk.ijse.gdse67.green_shadow.service.StaffService;
@@ -9,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,5 +35,11 @@ public class StaffController {
         }
     }
 
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<StaffDTO> getAllStaff(){
 
+            System.out.println(staffService.getAllStaff());
+            return staffService.getAllStaff();
+
+    }
 }

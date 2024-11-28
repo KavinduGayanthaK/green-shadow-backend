@@ -10,4 +10,5 @@ public interface StaffService extends Serializable {
 
     String generateStaffId();
 
+    List<StaffDTO> getAllStaff();
 }
