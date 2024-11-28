@@ -5,9 +5,7 @@ import lk.ijse.gdse67.green_shadow.Enum.Designation;
 import lk.ijse.gdse67.green_shadow.Enum.Gender;
 import lk.ijse.gdse67.green_shadow.Enum.Role;
 import lk.ijse.gdse67.green_shadow.entity.SuperEntity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,7 +13,8 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "staff")
 public class StaffEntity implements SuperEntity {
@@ -39,7 +38,7 @@ public class StaffEntity implements SuperEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @ManyToMany(mappedBy = "staffs")
+    @ManyToMany(mappedBy = "staffs", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<FieldEntity> fields = new ArrayList<>();
 
     @OneToMany(mappedBy = "staff",cascade = {CascadeType.MERGE,CascadeType.PERSIST})
@@ -50,4 +49,7 @@ public class StaffEntity implements SuperEntity {
 
     @ManyToMany(mappedBy = "staff")
     private List<EquipmentEntity> equipments;
+
+    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StaffEquipmentDetailsEntity> staffEquipmentDetails = new ArrayList<>();
 }
