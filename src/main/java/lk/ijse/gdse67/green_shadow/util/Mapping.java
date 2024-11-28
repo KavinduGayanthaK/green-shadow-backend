@@ -5,10 +5,7 @@ import lk.ijse.gdse67.green_shadow.Enum.Designation;
 import lk.ijse.gdse67.green_shadow.Enum.Gender;
 import lk.ijse.gdse67.green_shadow.Enum.Role;
 import lk.ijse.gdse67.green_shadow.dao.*;
-import lk.ijse.gdse67.green_shadow.dto.CropDTO;
-import lk.ijse.gdse67.green_shadow.dto.EquipmentDTO;
-import lk.ijse.gdse67.green_shadow.dto.FieldDTO;
-import lk.ijse.gdse67.green_shadow.dto.StaffDTO;
+import lk.ijse.gdse67.green_shadow.dto.*;
 import lk.ijse.gdse67.green_shadow.entity.impl.*;
 import lk.ijse.gdse67.green_shadow.exception.NotFoundException;
 import lk.ijse.gdse67.green_shadow.service.CropService;
@@ -229,6 +226,25 @@ public class Mapping {
             staffDTOS.add(staffDTO);
         });
         return staffDTOS;
+    }
+
+    public VehicleEntity toVehicleEntity(VehicleDTO vehicleDTO) {
+        VehicleEntity vehicleEntity =  new VehicleEntity();
+        vehicleEntity.setLicensePlateNumber(vehicleDTO.getLicensePlateNumber());
+        vehicleEntity.setFuelType(vehicleDTO.getFuelType());
+        vehicleEntity.setCategory(vehicleDTO.getCategory());
+        vehicleEntity.setStatus(vehicleDTO.getStatus());
+        vehicleEntity.setRemarks(vehicleEntity.getRemarks());
+        StaffEntity staffEntity = staffDao.findById(vehicleDTO.getStaff())
+                .orElseThrow(() -> new NotFoundException("Staff not found: " + vehicleDTO.getStaff()));
+        vehicleEntity.setStaff(staffEntity);
+        staffEntity.getVehicles().add(vehicleEntity);
+
+        return vehicleEntity;
+    }
+
+    public List<VehicleDTO> vehicleDTO(List<VehicleEntity> vehicleEntities) {
+        return modelMapper.map(vehicleEntities,new TypeToken<List<VehicleDTO>>() {}.getType());
     }
 
 }
