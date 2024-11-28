@@ -17,7 +17,7 @@ import static java.lang.Integer.parseInt;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/field")
-@CrossOrigin(origins = "http://localhost:63343")
+@CrossOrigin(origins = "*")
 public class FieldController {
 
     private final FieldService fieldService;
