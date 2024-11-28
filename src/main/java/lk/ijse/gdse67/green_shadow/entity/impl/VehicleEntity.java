@@ -16,10 +16,12 @@ public class VehicleEntity implements SuperEntity {
     @Id
     private String licensePlateNumber;
     private String category;
+    @Enumerated(EnumType.STRING)
     private VehicleFuelType fuelType;
+    @Enumerated(EnumType.STRING)
     private VehicleStatus status;
     private String remarks;
-    @ManyToOne()
-    @JoinColumn(name = "vehicles",nullable = false)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "staff")
     private StaffEntity staff;
 }
