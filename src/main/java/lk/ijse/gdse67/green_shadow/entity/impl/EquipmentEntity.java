@@ -2,16 +2,15 @@ package lk.ijse.gdse67.green_shadow.entity.impl;
 
 import jakarta.persistence.*;
 import lk.ijse.gdse67.green_shadow.entity.SuperEntity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "equipment")
 public class EquipmentEntity implements SuperEntity {
@@ -33,4 +32,7 @@ public class EquipmentEntity implements SuperEntity {
             joinColumns = @JoinColumn(name = "equipment_id"),
             inverseJoinColumns = @JoinColumn(name = "staff_code"))
     private List<StaffEntity> staff = new ArrayList<>();
+
+    @OneToMany(mappedBy = "equipment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StaffEquipmentDetailsEntity> staffEquipmentDetails = new ArrayList<>();
 }

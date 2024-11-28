@@ -2,9 +2,7 @@ package lk.ijse.gdse67.green_shadow.entity.impl;
 
 import jakarta.persistence.*;
 import lk.ijse.gdse67.green_shadow.entity.SuperEntity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.cache.interceptor.CacheAspectSupport;
 
 import java.awt.*;
@@ -13,7 +11,8 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "field")
 public class FieldEntity implements SuperEntity {
