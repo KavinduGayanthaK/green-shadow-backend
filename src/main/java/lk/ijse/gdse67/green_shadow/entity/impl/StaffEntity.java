@@ -7,6 +7,7 @@ import lk.ijse.gdse67.green_shadow.Enum.Role;
 import lk.ijse.gdse67.green_shadow.entity.SuperEntity;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,8 +27,8 @@ public class StaffEntity implements SuperEntity {
     private Designation designation;
     @Enumerated(EnumType.STRING)
     private Gender gender;
-    private Date joinedDate;
-    private Date dateOfBirth;
+    private LocalDate joinedDate;
+    private LocalDate dateOfBirth;
     private String address1;
     private String address2;
     private String address3;
