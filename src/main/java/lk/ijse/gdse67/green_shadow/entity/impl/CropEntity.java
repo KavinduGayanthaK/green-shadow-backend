@@ -20,11 +20,11 @@ public class CropEntity implements SuperEntity {
     private String cropCategory;
     private String cropSeason;
 
-    @ManyToMany(mappedBy = "crops")
+    @ManyToMany(mappedBy = "crops",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private List<FieldEntity> fields;
     @Column(columnDefinition = "LONGTEXT")
     private String cropImage;
 
-    @ManyToMany(mappedBy = "crop")
+    @ManyToMany(mappedBy = "crop",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private List<LogEntity> logs;
 }
