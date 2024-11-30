@@ -6,13 +6,16 @@ import lk.ijse.gdse67.green_shadow.entity.impl.CropEntity;
 import lk.ijse.gdse67.green_shadow.service.CropService;
 import lk.ijse.gdse67.green_shadow.util.Mapping;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.rowset.CachedRowSet;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CropServiceImpl implements CropService {
 
     private final CropDao cropDao;
