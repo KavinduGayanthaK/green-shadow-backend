@@ -2,6 +2,7 @@ package lk.ijse.gdse67.green_shadow.controller;
 
 import lk.ijse.gdse67.green_shadow.dto.FieldDTO;
 import lk.ijse.gdse67.green_shadow.exception.DataPersistException;
+import lk.ijse.gdse67.green_shadow.exception.NotFoundException;
 import lk.ijse.gdse67.green_shadow.service.FieldService;
 import lk.ijse.gdse67.green_shadow.util.AppUtil;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.awt.*;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static java.lang.Integer.parseInt;
 
 @RequiredArgsConstructor
@@ -68,5 +72,23 @@ public class FieldController {
                     .body("Internal server error | crop details fetch unsuccessfully.\nMore Reason\n"+e);
         }
 
+    }
+
+    @DeleteMapping(value = "/{fieldCode}")
+    public ResponseEntity<Void> deleteField(@PathVariable("fieldCode") String fieldCode) {
+        try{
+            String regexForLogCode = "^FIELD-\\d{3,4}$";
+            Pattern regexPattern = Pattern.compile(regexForLogCode);
+            Matcher regexMatcher =regexPattern.matcher(fieldCode);
+            if (!regexMatcher.matches()){
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            fieldService.deleteField(fieldCode);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch (NotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

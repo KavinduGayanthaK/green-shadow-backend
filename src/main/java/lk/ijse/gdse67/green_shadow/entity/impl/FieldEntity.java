@@ -31,7 +31,7 @@ public class FieldEntity implements SuperEntity {
             inverseJoinColumns = @JoinColumn(name = "crop_code"))
     private List<CropEntity> crops = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "fields")
+    @ManyToMany(mappedBy = "fields",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private List<LogEntity> logs = new ArrayList<>();
 
     @ManyToMany(mappedBy = "fields")
