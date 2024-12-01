@@ -28,7 +28,7 @@ public class FieldController {
     private final AppUtil appUtil;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> saveUser(
+    public ResponseEntity<Void> saveField(
             @RequestPart("fieldName") String fieldName,
             @RequestPart("fieldLocation") String fieldLocation,
             @RequestPart("extendSizeOfField") String extendSizeOfField,
@@ -63,6 +63,43 @@ public class FieldController {
         }
     }
 
+    @PatchMapping(value = "/{fieldCode}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> updateField(
+            @RequestPart("fieldName") String fieldName,
+            @RequestPart("fieldLocation") String fieldLocation,
+            @RequestPart("extendSizeOfField") String extendSizeOfField,
+            @RequestPart("fieldsCrop") List<String> fieldsCrop,
+            @RequestPart("fieldsStaff") List<String> fieldStaff,
+            @RequestPart(value = "fieldImage1", required = false) MultipartFile fieldImage1,
+            @RequestPart(value = "fieldImage2", required = false) MultipartFile fieldImage2,
+            @PathVariable("fieldCode") String fieldCode
+    ) {
+        try {
+            String[] locationParts = fieldLocation.split(",");
+            if (locationParts.length < 2) {
+                throw new IllegalAccessException("Invalid field location format");
+            }
+            int x = parseInt(locationParts[0].trim());
+            int y = parseInt(locationParts[1].trim());
+            Point location = new Point(x, y);
+            FieldDTO fieldDTO = new FieldDTO();
+            fieldDTO.setFieldCode(fieldCode);
+            fieldDTO.setFieldName(fieldName);
+            fieldDTO.setLocation(location);
+            fieldDTO.setExtendSizeOfField(extendSizeOfField);
+            fieldDTO.setCrops(fieldsCrop);
+            fieldDTO.setStaff(fieldStaff);
+            fieldDTO.setImage1(appUtil.generateImage(fieldImage1));
+            fieldDTO.setImage2(appUtil.generateImage(fieldImage2));
+            fieldService.updateField(fieldDTO);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (DataPersistException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllFields() {
         try{
@@ -73,6 +110,8 @@ public class FieldController {
         }
 
     }
+
+
 
     @DeleteMapping(value = "/{fieldCode}")
     public ResponseEntity<Void> deleteField(@PathVariable("fieldCode") String fieldCode) {

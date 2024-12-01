@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -73,5 +74,23 @@ public class FieldServiceImpl implements FieldService {
 
 
         fieldDao.delete(field);
+    }
+
+    @Override
+    public void updateField(FieldDTO fieldDTO) {
+        Optional<FieldEntity> tempField = fieldDao.findById(fieldDTO.getFieldCode());
+        FieldEntity field = mapping.toFieldEntity(fieldDTO);
+
+        if (tempField.isPresent()) {
+             tempField.get().setFieldName(field.getFieldName());
+             tempField.get().setLocation(field.getLocation());
+             tempField.get().setExtendSizeOfField(field.getExtendSizeOfField());
+             tempField.get().setImage1(field.getImage1());
+             tempField.get().setImage2(field.getImage2());
+             tempField.get().setCrops(field.getCrops());
+             tempField.get().setLogs(field.getLogs());
+             tempField.get().setEquipments(field.getEquipments());
+             tempField.get().setStaffs(field.getStaffs());
+        }
     }
 }
