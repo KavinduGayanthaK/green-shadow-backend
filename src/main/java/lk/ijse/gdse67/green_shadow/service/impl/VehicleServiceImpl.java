@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -51,5 +52,19 @@ public class VehicleServiceImpl implements VehicleService {
         }
 
         vehicleDao.delete(vehicle);
+    }
+
+    @Override
+    public void updateVehicle(String licensePlateNumber, VehicleDTO vehicleDTO) {
+        Optional<VehicleEntity> tempVehicle = vehicleDao.findById(licensePlateNumber);
+        VehicleEntity vehicle = mapping.toVehicleEntity(vehicleDTO);
+        if (tempVehicle.isPresent()) {
+            tempVehicle.get().setLicensePlateNumber(licensePlateNumber);
+            tempVehicle.get().setCategory(vehicle.getCategory());
+            tempVehicle.get().setFuelType(vehicle.getFuelType());
+            tempVehicle.get().setStatus(vehicle.getStatus());
+            tempVehicle.get().setRemarks(vehicle.getRemarks());
+            tempVehicle.get().setStaff(vehicle.getStaff());
+        }
     }
 }

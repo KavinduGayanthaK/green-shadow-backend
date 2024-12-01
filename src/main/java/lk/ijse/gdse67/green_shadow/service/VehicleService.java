@@ -10,4 +10,6 @@ public interface VehicleService extends Serializable {
     List<VehicleDTO> getAllVehicle();
 
     void deleteVehicle(String licensePlateNumber);
+
+    void updateVehicle(String licensePlateNumber, VehicleDTO vehicleDTO);
 }
