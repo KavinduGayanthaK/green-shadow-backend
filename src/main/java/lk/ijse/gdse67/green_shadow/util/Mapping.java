@@ -9,18 +9,21 @@ import lk.ijse.gdse67.green_shadow.dto.*;
 import lk.ijse.gdse67.green_shadow.entity.impl.*;
 import lk.ijse.gdse67.green_shadow.exception.NotFoundException;
 import lk.ijse.gdse67.green_shadow.service.CropService;
+import lk.ijse.gdse67.green_shadow.service.LogService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class Mapping {
     private final CropDao cropDao;
     private final StaffDao staffDao;
@@ -28,16 +31,18 @@ public class Mapping {
     private final VehicleDao vehicleDao;
     private final EquipmentDao equipmentDao;
 
+
     private final ModelMapper modelMapper;
 
-    public Mapping(CropDao cropDao, StaffDao staffDao, FieldDao fieldDao, VehicleDao vehicleDao, EquipmentDao equipmentDao, ModelMapper modelMapper) {
-        this.cropDao = cropDao;
-        this.staffDao = staffDao;
-        this.fieldDao = fieldDao;
-        this.vehicleDao = vehicleDao;
-        this.equipmentDao = equipmentDao;
-        this.modelMapper = modelMapper;
-    }
+//    public Mapping(CropDao cropDao, StaffDao staffDao, FieldDao fieldDao, VehicleDao vehicleDao, EquipmentDao equipmentDao, LogService logService, ModelMapper modelMapper) {
+//        this.cropDao = cropDao;
+//        this.staffDao = staffDao;
+//        this.fieldDao = fieldDao;
+//        this.vehicleDao = vehicleDao;
+//        this.equipmentDao = equipmentDao;
+//        this.logService = logService;
+//        this.modelMapper = modelMapper;
+//    }
 
 
     public FieldEntity toFieldEntity(FieldDTO fieldDTO) {
@@ -119,8 +124,8 @@ public class Mapping {
         staffEntity.setLastName(staffDTO.getLastName());
         staffEntity.setDesignation(staffDTO.getDesignation());
         staffEntity.setGender(staffDTO.getGender());
-        staffEntity.setJoinedDate(staffDTO.getJoinedDate());
-        staffEntity.setDateOfBirth(staffDTO.getDateOfBirth());
+        staffEntity.setJoinedDate(LocalDate.parse(staffDTO.getJoinedDate()));
+        staffEntity.setDateOfBirth(LocalDate.parse(staffDTO.getDateOfBirth()));
         staffEntity.setAddress1(staffDTO.getAddress1());
         staffEntity.setAddress2(staffDTO.getAddress2());
         staffEntity.setAddress3(staffDTO.getAddress3());
@@ -204,8 +209,8 @@ public class Mapping {
                     staffEntity.getLastName(),
                     staffEntity.getDesignation(),
                     staffEntity.getGender(),
-                    staffEntity.getJoinedDate(),
-                    staffEntity.getDateOfBirth(),
+                    String.valueOf(staffEntity.getJoinedDate()),
+                    String.valueOf(staffEntity.getDateOfBirth()),
                     staffEntity.getAddress1(),
                     staffEntity.getAddress2(),
                     staffEntity.getAddress3(),
@@ -234,7 +239,7 @@ public class Mapping {
         vehicleEntity.setFuelType(vehicleDTO.getFuelType());
         vehicleEntity.setCategory(vehicleDTO.getCategory());
         vehicleEntity.setStatus(vehicleDTO.getStatus());
-        vehicleEntity.setRemarks(vehicleEntity.getRemarks());
+        vehicleEntity.setRemarks(vehicleDTO.getRemarks());
         StaffEntity staffEntity = staffDao.findById(vehicleDTO.getStaff())
                 .orElseThrow(() -> new NotFoundException("Staff not found: " + vehicleDTO.getStaff()));
         vehicleEntity.setStaff(staffEntity);
@@ -245,6 +250,42 @@ public class Mapping {
 
     public List<VehicleDTO> vehicleDTO(List<VehicleEntity> vehicleEntities) {
         return modelMapper.map(vehicleEntities,new TypeToken<List<VehicleDTO>>() {}.getType());
+    }
+
+
+
+    public LogEntity toLogEntity(LogDTO logDTO) {
+        LogEntity logEntity =  new LogEntity();
+        logEntity.setLogCode(logDTO.getLogCode());
+        logEntity.setLogDetail(logDTO.getLogDetail());
+        logEntity.setLogDate(LocalDate.parse(logDTO.getLogDate()));
+        logEntity.setLogImage(logDTO.getLogImage());
+        logEntity.setFields(logDTO.getFields().stream().map(fields->
+                fieldDao.findById(fields).orElseThrow(()->new NotFoundException("Field not found : "+fields))).toList());
+        logEntity.setStaff(logDTO.getStaff().stream().map(staff->
+                staffDao.findById(staff).orElseThrow(()->new NotFoundException("Staff not found : "+staff))).toList());
+        logEntity.setCrop(logDTO.getCrop().stream().map(crop->
+                cropDao.findById(crop).orElseThrow(()->new NotFoundException("Crop not found : "+crop))).toList());
+
+        return logEntity;
+
+    }
+
+    public List<LogDTO> toGetAllLogDto(List<LogEntity> logEntities) {
+        List<LogDTO> logDTOS = new ArrayList<>();
+        logEntities.forEach(logEntity -> {
+            LogDTO logDTO = new LogDTO(
+                 logEntity.getLogCode(),
+                    logEntity.getLogDetail(),
+                    String.valueOf(logEntity.getLogDate()),
+                    logEntity.getLogImage(),
+                    logEntity.getFields().stream().map(FieldEntity::getFieldCode).toList(),
+                    logEntity.getStaff().stream().map(StaffEntity::getStaffId).toList(),
+                    logEntity.getCrop().stream().map(CropEntity::getCropCode).toList()
+            );
+            logDTOS.add(logDTO);
+        });
+        return logDTOS;
     }
 
 }
