@@ -12,4 +12,5 @@ public interface CropService extends Serializable {
 
     void deleteCrop(String cropCode);
 
+    void updateCrop(CropDTO cropDTO);
 }

@@ -59,6 +59,35 @@ public class CropController {
         return cropService.getAllCrop();
     }
 
+    @PatchMapping(value = "/{cropCode}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> updateCrop(
+            @RequestPart("commonName") String commonName,
+            @RequestPart("scientificName") String scientificName,
+            @RequestPart("cropCategory") String cropCategory,
+            @RequestPart("cropSeason") String cropSeason,
+            @RequestPart("fields") List<String> fields,
+            @RequestPart("cropImage") MultipartFile cropImage,
+            @PathVariable("cropCode") String cropCode
+    ) {
+        try {
+            CropDTO cropDTO = new CropDTO();
+            cropDTO.setCropCode(cropCode);
+            cropDTO.setCommonName(commonName);
+            cropDTO.setScientificName(scientificName);
+            cropDTO.setCropCategory(cropCategory);
+            cropDTO.setCropSeason(cropSeason);
+            cropDTO.setFields(fields);
+            cropDTO.setCropImage(appUtil.generateImage(cropImage));
+            cropService.updateCrop(cropDTO);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }catch (DataPersistException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
     @DeleteMapping(value = "/{cropCode}")
     public ResponseEntity<Void> deleteCrop(@PathVariable("cropCode") String cropCode) {
         try{

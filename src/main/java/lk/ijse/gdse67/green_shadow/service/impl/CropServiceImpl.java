@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.rowset.CachedRowSet;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -62,8 +63,22 @@ public class CropServiceImpl implements CropService {
         crop.getLogs().forEach(log -> log.getCrop().remove(crop));
 
         cropDao.delete(crop);
+    }
 
-
+    @Override
+    public void updateCrop(CropDTO cropDTO) {
+        Optional<CropEntity> tempCrop = cropDao.findById(cropDTO.getCropCode());
+        CropEntity crop = mapping.toCropEntity(cropDTO);
+        if (tempCrop.isPresent()) {
+            tempCrop.get().setCropCode(crop.getCropCode());
+            tempCrop.get().setCommonName(crop.getCommonName());
+            tempCrop.get().setScientificName(crop.getScientificName());
+            tempCrop.get().setCropCategory(crop.getCropCategory());
+            tempCrop.get().setCropSeason(crop.getCropSeason());
+            tempCrop.get().setFields(crop.getFields());
+            tempCrop.get().setCropImage(crop.getCropImage());
+            tempCrop.get().setLogs(crop.getLogs());
+        }
     }
 
 
