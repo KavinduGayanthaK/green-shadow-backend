@@ -3,6 +3,8 @@ package lk.ijse.gdse67.green_shadow.service.impl;
 import lk.ijse.gdse67.green_shadow.dao.CropDao;
 import lk.ijse.gdse67.green_shadow.dto.CropDTO;
 import lk.ijse.gdse67.green_shadow.entity.impl.CropEntity;
+import lk.ijse.gdse67.green_shadow.entity.impl.FieldEntity;
+import lk.ijse.gdse67.green_shadow.exception.NotFoundException;
 import lk.ijse.gdse67.green_shadow.service.CropService;
 import lk.ijse.gdse67.green_shadow.util.Mapping;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +47,23 @@ public class CropServiceImpl implements CropService {
     @Override
     public List<CropDTO> getAllCrop() {
         return mapping.toGetAllCropDTO(cropDao.findAll());
+    }
+
+    @Override
+    public void deleteCrop(String cropCode) {
+        CropEntity crop = cropDao.findById(cropCode).
+                orElseThrow(()->new NotFoundException("Crop not found: " + cropCode));
+
+        for (FieldEntity field : crop.getFields()) {
+            crop.getFields().remove(field);
+
+        }
+        crop.getFields().clear();
+        crop.getLogs().forEach(log -> log.getCrop().remove(crop));
+
+        cropDao.delete(crop);
+
+
     }
 
 
