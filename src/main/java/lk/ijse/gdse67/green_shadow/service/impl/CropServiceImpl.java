@@ -1,6 +1,7 @@
 package lk.ijse.gdse67.green_shadow.service.impl;
 
 import lk.ijse.gdse67.green_shadow.dao.CropDao;
+import lk.ijse.gdse67.green_shadow.dao.FieldDao;
 import lk.ijse.gdse67.green_shadow.dto.CropDTO;
 import lk.ijse.gdse67.green_shadow.entity.impl.CropEntity;
 import lk.ijse.gdse67.green_shadow.entity.impl.FieldEntity;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.rowset.CachedRowSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +24,7 @@ import java.util.Optional;
 public class CropServiceImpl implements CropService {
 
     private final CropDao cropDao;
+    private final FieldDao fieldDao;
     private final Mapping mapping;
     @Override
     public String generateCropCode() {
@@ -47,7 +50,25 @@ public class CropServiceImpl implements CropService {
 
     @Override
     public List<CropDTO> getAllCrop() {
-        return mapping.toGetAllCropDTO(cropDao.findAll());
+       List<CropDTO> cropDTOS = new ArrayList<>();
+       for(CropEntity crop: cropDao.findAll()) {
+           List<String> fields = new ArrayList<>();
+
+           for(FieldEntity field: crop.getFields()) {
+               fields.add(field.getFieldCode());
+           }
+
+           cropDTOS.add(new CropDTO(
+                   crop.getCropCode(),
+                   crop.getCommonName(),
+                   crop.getScientificName(),
+                   crop.getCropCategory(),
+                   crop.getCropSeason(),
+                   fields,
+                   crop.getCropImage()
+           ));
+       }
+       return cropDTOS;
     }
 
     @Override
@@ -67,18 +88,30 @@ public class CropServiceImpl implements CropService {
 
     @Override
     public void updateCrop(CropDTO cropDTO) {
-        Optional<CropEntity> tempCrop = cropDao.findById(cropDTO.getCropCode());
-        CropEntity crop = mapping.toCropEntity(cropDTO);
-        if (tempCrop.isPresent()) {
-            tempCrop.get().setCropCode(crop.getCropCode());
-            tempCrop.get().setCommonName(crop.getCommonName());
-            tempCrop.get().setScientificName(crop.getScientificName());
-            tempCrop.get().setCropCategory(crop.getCropCategory());
-            tempCrop.get().setCropSeason(crop.getCropSeason());
-            tempCrop.get().setFields(crop.getFields());
-            tempCrop.get().setCropImage(crop.getCropImage());
-            tempCrop.get().setLogs(crop.getLogs());
+        CropEntity existCrop = cropDao.findById(cropDTO.getCropCode()).
+                orElseThrow(()->new NotFoundException("Crop not found : " + cropDTO.getCropCode()));
+
+        existCrop.setCommonName(cropDTO.getCommonName());
+        existCrop.setScientificName(cropDTO.getScientificName());
+        existCrop.setCropCategory(cropDTO.getCropCategory());
+        existCrop.setCropSeason(cropDTO.getCropSeason());
+
+
+        for (FieldEntity field : existCrop.getFields()) {
+            field.getCrops().remove(existCrop); // Remove old references
         }
+        existCrop.getFields().clear();
+
+        for (String fieldId : cropDTO.getFields()) {
+            FieldEntity field = fieldDao.findById(fieldId)
+                    .orElseThrow(() -> new NotFoundException("Field not found: " + fieldId));
+            existCrop.getFields().add(field);
+            field.getCrops().add(existCrop); // Synchronize both sides
+        }
+
+        existCrop.setCropImage(cropDTO.getCropImage());
+
+        cropDao.save(existCrop);
     }
 
 
