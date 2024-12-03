@@ -1,6 +1,8 @@
 package lk.ijse.gdse67.green_shadow.service.impl;
 
+import lk.ijse.gdse67.green_shadow.dao.CropDao;
 import lk.ijse.gdse67.green_shadow.dao.FieldDao;
+import lk.ijse.gdse67.green_shadow.dao.StaffDao;
 import lk.ijse.gdse67.green_shadow.dto.FieldDTO;
 import lk.ijse.gdse67.green_shadow.entity.impl.*;
 import lk.ijse.gdse67.green_shadow.exception.NotFoundException;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,11 +25,15 @@ public class FieldServiceImpl implements FieldService {
     private final Mapping mapping;
 
     private final FieldDao fieldDao;
+    private final CropDao cropDao;
+    private final StaffDao staffDao;
 
     @Autowired
-    public FieldServiceImpl(Mapping mapping, FieldDao fieldDao) {
+    public FieldServiceImpl(Mapping mapping, FieldDao fieldDao, CropDao cropDao, StaffDao staffDao) {
         this.mapping = mapping;
         this.fieldDao = fieldDao;
+        this.cropDao = cropDao;
+        this.staffDao = staffDao;
     }
 
     @Override
@@ -48,7 +55,30 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public List<FieldDTO> getAllField() {
-        return mapping.toGetAllFieldDTO(fieldDao.findAll());
+        List<FieldDTO> fieldDTOS = new ArrayList<>();
+        for(FieldEntity field : fieldDao.findAll()) {
+            List<String> crops = new ArrayList<>();
+            List<String> staffs = new ArrayList<>();
+
+            for(CropEntity crop:field.getCrops()){
+                crops.add(crop.getCropCode());
+            }
+            for(StaffEntity staff : field.getStaffs()){
+                staffs.add(staff.getStaffId());
+            }
+
+            fieldDTOS.add(new FieldDTO(
+                    field.getFieldCode(),
+                    field.getFieldName(),
+                    field.getLocation(),
+                    field.getExtendSizeOfField(),
+                    field.getImage1(),
+                    field.getImage2(),
+                    crops,
+                    staffs
+            ));
+        }
+        return fieldDTOS;
     }
 
     @Override
@@ -78,19 +108,40 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public void updateField(FieldDTO fieldDTO) {
-        Optional<FieldEntity> tempField = fieldDao.findById(fieldDTO.getFieldCode());
-        FieldEntity field = mapping.toFieldEntity(fieldDTO);
+        FieldEntity existField = fieldDao.findById(fieldDTO.getFieldCode()).
+                orElseThrow(()->new NotFoundException("Crop not found : " + fieldDTO.getFieldCode()));
 
-        if (tempField.isPresent()) {
-             tempField.get().setFieldName(field.getFieldName());
-             tempField.get().setLocation(field.getLocation());
-             tempField.get().setExtendSizeOfField(field.getExtendSizeOfField());
-             tempField.get().setImage1(field.getImage1());
-             tempField.get().setImage2(field.getImage2());
-             tempField.get().setCrops(field.getCrops());
-             tempField.get().setLogs(field.getLogs());
-             tempField.get().setEquipments(field.getEquipments());
-             tempField.get().setStaffs(field.getStaffs());
+        existField.setFieldName(fieldDTO.getFieldName());
+        existField.setLocation(fieldDTO.getLocation());
+        existField.setExtendSizeOfField(fieldDTO.getExtendSizeOfField());
+        existField.setImage1(fieldDTO.getImage1());
+        existField.setImage2(fieldDTO.getImage2());
+
+
+        for (CropEntity crop : existField.getCrops()) {
+            crop.getFields().remove(existField); // Remove old references
         }
+        existField.getCrops().clear();
+
+        for (String cropId : fieldDTO.getCrops()) {
+            CropEntity crop = cropDao.findById(cropId)
+                    .orElseThrow(() -> new NotFoundException("Field not found: " + cropId));
+            existField.getCrops().add(crop);
+            crop.getFields().add(existField); // Synchronize both sides
+        }
+
+        for (StaffEntity staff : existField.getStaffs()) {
+            staff.getFields().remove(existField); // Remove old references
+        }
+        existField.getStaffs().clear();
+
+        for (String staffId : fieldDTO.getStaff()) {
+            StaffEntity staff = staffDao.findById(staffId)
+                    .orElseThrow(() -> new NotFoundException("Field not found: " + staffId));
+            existField.getStaffs().add(staff);
+            staff.getFields().add(existField); // Synchronize both sides
+        }
+
+        fieldDao.save(existField);
     }
 }
