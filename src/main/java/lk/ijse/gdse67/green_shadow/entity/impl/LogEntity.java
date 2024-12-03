@@ -20,6 +20,7 @@ public class LogEntity implements SuperEntity {
     private String logCode;
     private String logDetail;
     private LocalDate logDate;
+    @Column(columnDefinition = "LONGTEXT")
     private String logImage;
 
 
