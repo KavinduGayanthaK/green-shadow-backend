@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface StaffService extends Serializable {
     void saveStaff(StaffDTO staffDTO);
-
     String generateStaffId();
-
     List<StaffDTO> getAllStaff();
+    void deleteStaff(String staffId);
+    void updateStaff(StaffDTO staffDTO);
 }

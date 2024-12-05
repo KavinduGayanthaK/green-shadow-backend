@@ -10,4 +10,8 @@ public interface FieldService extends Serializable {
     List<FieldDTO> getAllField();
 
     void saveField(FieldDTO fieldDTO);
+
+    void deleteField(String fieldCode);
+
+    void updateField(FieldDTO fieldDTO);
 }

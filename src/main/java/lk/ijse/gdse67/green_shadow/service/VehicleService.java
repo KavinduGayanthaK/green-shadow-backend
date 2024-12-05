@@ -8,4 +8,8 @@ import java.util.List;
 public interface VehicleService extends Serializable {
     void saveVehicle(VehicleDTO vehicleDTO);
     List<VehicleDTO> getAllVehicle();
+
+    void deleteVehicle(String licensePlateNumber);
+
+    void updateVehicle(String licensePlateNumber, VehicleDTO vehicleDTO);
 }

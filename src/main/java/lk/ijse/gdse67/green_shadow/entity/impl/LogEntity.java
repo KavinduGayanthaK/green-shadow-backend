@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lk.ijse.gdse67.green_shadow.entity.SuperEntity;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @NoArgsConstructor
@@ -17,7 +19,8 @@ public class LogEntity implements SuperEntity {
     @Id
     private String logCode;
     private String logDetail;
-    private String logDate;
+    private LocalDate logDate;
+    @Column(columnDefinition = "LONGTEXT")
     private String logImage;
 
 

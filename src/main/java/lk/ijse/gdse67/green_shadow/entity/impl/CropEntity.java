@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lk.ijse.gdse67.green_shadow.entity.SuperEntity;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -20,11 +21,11 @@ public class CropEntity implements SuperEntity {
     private String cropCategory;
     private String cropSeason;
 
-    @ManyToMany(mappedBy = "crops")
+    @ManyToMany(mappedBy = "crops",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private List<FieldEntity> fields;
     @Column(columnDefinition = "LONGTEXT")
     private String cropImage;
 
-    @ManyToMany(mappedBy = "crop")
-    private List<LogEntity> logs;
+    @ManyToMany(mappedBy = "crop",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    private List<LogEntity> logs = new ArrayList<>();
 }
