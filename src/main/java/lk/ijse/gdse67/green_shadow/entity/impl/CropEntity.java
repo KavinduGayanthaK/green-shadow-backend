@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lk.ijse.gdse67.green_shadow.entity.SuperEntity;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -26,5 +27,5 @@ public class CropEntity implements SuperEntity {
     private String cropImage;
 
     @ManyToMany(mappedBy = "crop",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
-    private List<LogEntity> logs;
+    private List<LogEntity> logs = new ArrayList<>();
 }
