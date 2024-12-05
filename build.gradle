@@ -41,7 +41,7 @@ dependencies {
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.6'
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '3.4.0'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 
