@@ -14,12 +14,14 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,6 +32,7 @@ public class Mapping {
     private final FieldDao fieldDao;
     private final VehicleDao vehicleDao;
     private final EquipmentDao equipmentDao;
+    private final PasswordEncoder passwordEncoder;
 
 
     private final ModelMapper modelMapper;
@@ -153,11 +156,15 @@ public class Mapping {
                         .orElseThrow(() -> new NotFoundException("Vehicle not found: " + vehicle)))
                 .toList());
 
-        staffEntity.setEquipments(staffDTO.getEquipments().stream()
-                .map(eq -> equipmentDao.findById(eq)
-                        .orElseThrow(() -> new NotFoundException("Equipment not found: " + eq)))
-                .toList());
-
+        if (staffDTO.getEquipments() != null) {
+            List<EquipmentEntity> equipments = new ArrayList<>();
+            for (String equipmentDTO : staffDTO.getEquipments()) {
+                EquipmentEntity equipment = equipmentDao.findById(equipmentDTO)
+                        .orElseThrow(() -> new NotFoundException("Equipment not found: " + equipmentDTO));
+                equipments.add(equipment);
+            }
+            //staffEntity.setEquipments(equipments);
+        }
         return staffEntity;
     }
 
@@ -170,68 +177,69 @@ public class Mapping {
         equipmentEntity.setEquipmentName(equipmentDTO.getEquipmentName());
         equipmentEntity.setType(equipmentDTO.getType());
         equipmentEntity.setStatus(equipmentDTO.getStatus());
+
         equipmentEntity.setFields(equipmentDTO.getFields().stream().map(fieldCode->fieldDao.findById(fieldCode).
                 orElseThrow(()->new NotFoundException("Field Not Found"+fieldCode))).toList());
-        equipmentEntity.setStaff(equipmentDTO.getStaff().stream().map(staffId->staffDao.findById(staffId).
-                orElseThrow(()->new NotFoundException("Staff Not Found"+staffId))).toList());
+        //equipmentEntity.setStaff(equipmentDTO.getStaff().stream().map(staffId->staffDao.findById(staffId).
+                //orElseThrow(()->new NotFoundException("Staff Not Found"+staffId))).toList());
 
         return equipmentEntity;
     }
 
-    public List<EquipmentDTO> toGetAllEquipmentDTO(List<EquipmentEntity> equipmentEntities) {
-        List<EquipmentDTO> equipmentDTOS = new ArrayList<>();
+//    public List<EquipmentDTO> toGetAllEquipmentDTO(List<EquipmentEntity> equipmentEntities) {
+//        List<EquipmentDTO> equipmentDTOS = new ArrayList<>();
+//
+//        equipmentEntities.forEach(equipmentEntity->{
+//            EquipmentDTO equipmentDTO = new EquipmentDTO(
+//                    equipmentEntity.getEquipmentId(),
+//                    equipmentEntity.getEquipmentName(),
+//                    equipmentEntity.getType(),
+//                    equipmentEntity.getStatus(),
+//                    equipmentEntity.getFields().stream()
+//                            .map(FieldEntity::getFieldCode)
+//                            .toList(),
+//                    equipmentEntity.getStaff().stream().map(StaffEntity::getStaffId)
+//                            .toList()
+//
+//            );
+//            equipmentDTOS.add(equipmentDTO);
+//        });
+//        return equipmentDTOS;
+//    }
 
-        equipmentEntities.forEach(equipmentEntity->{
-            EquipmentDTO equipmentDTO = new EquipmentDTO(
-                    equipmentEntity.getEquipmentId(),
-                    equipmentEntity.getEquipmentName(),
-                    equipmentEntity.getType(),
-                    equipmentEntity.getStatus(),
-                    equipmentEntity.getFields().stream()
-                            .map(FieldEntity::getFieldCode)
-                            .toList(),
-                    equipmentEntity.getStaff().stream().map(StaffEntity::getStaffId)
-                            .toList()
-
-            );
-            equipmentDTOS.add(equipmentDTO);
-        });
-        return equipmentDTOS;
-    }
-
-    public List<StaffDTO> toGetAllStaffDTO(List<StaffEntity> staffEntities) {
-        List<StaffDTO> staffDTOS = new ArrayList<>();
-
-        staffEntities.forEach(staffEntity->{
-            StaffDTO staffDTO = new StaffDTO(
-                    staffEntity.getStaffId(),
-                    staffEntity.getFirstName(),
-                    staffEntity.getLastName(),
-                    staffEntity.getDesignation(),
-                    staffEntity.getGender(),
-                    String.valueOf(staffEntity.getJoinedDate()),
-                    String.valueOf(staffEntity.getDateOfBirth()),
-                    staffEntity.getAddress1(),
-                    staffEntity.getAddress2(),
-                    staffEntity.getAddress3(),
-                    staffEntity.getAddress4(),
-                    staffEntity.getAddress5(),
-                    staffEntity.getContactNumber(),
-                    staffEntity.getEmail(),
-                    staffEntity.getRole(),
-                    staffEntity.getFields().stream()
-                            .map(FieldEntity::getFieldCode)
-                            .toList(),
-                    staffEntity.getVehicles().stream().map(VehicleEntity::getLicensePlateNumber)
-                            .toList(),
-                    staffEntity.getEquipments().stream().map(EquipmentEntity::getEquipmentId)
-                            .toList()
-
-            );
-            staffDTOS.add(staffDTO);
-        });
-        return staffDTOS;
-    }
+//    public List<StaffDTO> toGetAllStaffDTO(List<StaffEntity> staffEntities) {
+//        List<StaffDTO> staffDTOS = new ArrayList<>();
+//
+//        staffEntities.forEach(staffEntity->{
+//            StaffDTO staffDTO = new StaffDTO(
+//                    staffEntity.getStaffId(),
+//                    staffEntity.getFirstName(),
+//                    staffEntity.getLastName(),
+//                    staffEntity.getDesignation(),
+//                    staffEntity.getGender(),
+//                    String.valueOf(staffEntity.getJoinedDate()),
+//                    String.valueOf(staffEntity.getDateOfBirth()),
+//                    staffEntity.getAddress1(),
+//                    staffEntity.getAddress2(),
+//                    staffEntity.getAddress3(),
+//                    staffEntity.getAddress4(),
+//                    staffEntity.getAddress5(),
+//                    staffEntity.getContactNumber(),
+//                    staffEntity.getEmail(),
+//                    staffEntity.getRole(),
+//                    staffEntity.getFields().stream()
+//                            .map(FieldEntity::getFieldCode)
+//                            .toList(),
+//                    staffEntity.getVehicles().stream().map(VehicleEntity::getLicensePlateNumber)
+//                            .toList(),
+//                    staffEntity.getEquipments().stream().map(EquipmentEntity::getEquipmentId)
+//                            .toList()
+//
+//            );
+//            staffDTOS.add(staffDTO);
+//        });
+//        return staffDTOS;
+//    }
 
     public VehicleEntity toVehicleEntity(VehicleDTO vehicleDTO) {
         VehicleEntity vehicleEntity =  new VehicleEntity();
@@ -288,4 +296,11 @@ public class Mapping {
         return logDTOS;
     }
 
+    public UserEntity toUserEntity(UserDTO userDTO) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setEmail(userDTO.getEmail());
+        userEntity.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
+        userEntity.setRole(userDTO.getRole());
+        return userEntity;
+    }
 }
