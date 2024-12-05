@@ -45,12 +45,10 @@ public class StaffEntity implements SuperEntity {
     @OneToMany(mappedBy = "staff",cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     private List<VehicleEntity> vehicles = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "staff")
-    private List<LogEntity> logs;
+    @ManyToMany(mappedBy = "staff",cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    private List<LogEntity> logs = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "staff")
-    private List<EquipmentEntity> equipments;
+    @ManyToMany(mappedBy = "staff",cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    private List<EquipmentEntity> equipments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StaffEquipmentDetailsEntity> staffEquipmentDetails = new ArrayList<>();
 }
