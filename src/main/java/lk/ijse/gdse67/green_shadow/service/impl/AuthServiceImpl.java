@@ -35,6 +35,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void signUp(UserDTO userDTO) {
+        emailService.sendEmail(userDTO.getEmail(), "Email From GreenShadow", "Your user email:  " + userDTO.getEmail() + "\n Your temporary password to login: " + userDTO.getPassword());
         userDao.save(mapping.toUserEntity(userDTO));
     }
 
