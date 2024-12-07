@@ -1,5 +1,6 @@
 package lk.ijse.gdse67.green_shadow.controller;
 
+import jakarta.annotation.security.RolesAllowed;
 import lk.ijse.gdse67.green_shadow.dto.VehicleDTO;
 import lk.ijse.gdse67.green_shadow.exception.DataPersistException;
 import lk.ijse.gdse67.green_shadow.exception.NotFoundException;
@@ -22,6 +23,7 @@ public class VehicleController {
 
     private final VehicleService vehicleService;
 
+    @RolesAllowed({"MANAGER", "ADMINISTRATIVE"})
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> saveVehicle(@RequestBody VehicleDTO vehicleDTO) {
         try{
@@ -34,11 +36,13 @@ public class VehicleController {
         }
     }
 
+    @RolesAllowed({"MANAGER", "ADMINISTRATIVE", "SCIENTIST"})
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<VehicleDTO> getAllVehicle() {
         return vehicleService.getAllVehicle();
     }
 
+    @RolesAllowed({"MANAGER", "ADMINISTRATIVE"})
     @DeleteMapping(value = "/{licensePlateNumber}")
     public ResponseEntity<Void> deleteVehicle(@PathVariable("licensePlateNumber") String licensePlateNumber) {
         try{
@@ -57,6 +61,7 @@ public class VehicleController {
         }
     }
 
+    @RolesAllowed({"MANAGER", "ADMINISTRATIVE"})
     @PatchMapping(value = "/{licensePlateNumber}",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateVehicle(@PathVariable("licensePlateNumber")String licensePlateNumber,
                                            @RequestBody VehicleDTO vehicleDTO) {

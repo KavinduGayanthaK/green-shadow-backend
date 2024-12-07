@@ -1,5 +1,6 @@
 package lk.ijse.gdse67.green_shadow.controller;
 
+import jakarta.annotation.security.RolesAllowed;
 import lk.ijse.gdse67.green_shadow.dto.CropDTO;
 import lk.ijse.gdse67.green_shadow.exception.DataPersistException;
 import lk.ijse.gdse67.green_shadow.exception.NotFoundException;
@@ -26,6 +27,7 @@ public class CropController {
     private final AppUtil appUtil;
     private final CropService cropService;
 
+    @RolesAllowed({"MANAGER", "SCIENTIST"})
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> saveCrop(
             @RequestPart("commonName") String commonName,
@@ -54,11 +56,13 @@ public class CropController {
 
     }
 
+    @RolesAllowed({"MANAGER", "ADMINISTRATIVE", "SCIENTIST"})
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CropDTO> getAllCrop() {
         return cropService.getAllCrop();
     }
 
+    @RolesAllowed({"MANAGER", "SCIENTIST"})
     @PatchMapping(value = "/{cropCode}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateCrop(
             @RequestPart("commonName") String commonName,
@@ -88,6 +92,7 @@ public class CropController {
 
     }
 
+    @RolesAllowed({"MANAGER", "SCIENTIST"})
     @DeleteMapping(value = "/{cropCode}")
     public ResponseEntity<Void> deleteCrop(@PathVariable("cropCode") String cropCode) {
         try{
