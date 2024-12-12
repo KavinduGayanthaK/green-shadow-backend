@@ -29,7 +29,7 @@ public class StaffDTO {
     private String address3;
     private String address4;
     private String address5;
-    private int contactNumber;
+    private String contactNumber;
     private String email;
     private Role role;
     private List<String> field = new ArrayList<>();

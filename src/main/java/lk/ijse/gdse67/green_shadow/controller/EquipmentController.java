@@ -1,5 +1,6 @@
 package lk.ijse.gdse67.green_shadow.controller;
 
+import jakarta.annotation.security.RolesAllowed;
 import lk.ijse.gdse67.green_shadow.dto.EquipmentDTO;
 import lk.ijse.gdse67.green_shadow.exception.DataPersistException;
 import lk.ijse.gdse67.green_shadow.service.EquipmentService;
@@ -22,7 +23,7 @@ public class EquipmentController {
 
     private final EquipmentService equipmentService;
 
-
+    @RolesAllowed({"MANAGER", "ADMINISTRATIVE"})
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> saveEquipment(@RequestBody EquipmentDTO equipmentDTO) {
         try {
@@ -39,7 +40,7 @@ public class EquipmentController {
     }
 
 
-
+    @RolesAllowed({"MANAGER", "ADMINISTRATIVE", "SCIENTIST"})
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<EquipmentDTO> getAllEquipment() {
         return equipmentService.getAllEquipment();
@@ -51,7 +52,7 @@ public class EquipmentController {
 
 
 
-    // Update existing equipment
+    @RolesAllowed({"MANAGER", "ADMINISTRATIVE"})
     @PutMapping("/{equipmentId}")
     public ResponseEntity<?> updateEquipment(@PathVariable String equipmentId, @RequestBody EquipmentDTO equipment) {
         try {
@@ -66,7 +67,7 @@ public class EquipmentController {
 
     }
 
-    // Delete equipment by ID
+    @RolesAllowed({"MANAGER", "ADMINISTRATIVE"})
     @DeleteMapping("/{equipmentId}")
     public ResponseEntity<Void> deleteEquipment(@PathVariable String equipmentId) {
         try{

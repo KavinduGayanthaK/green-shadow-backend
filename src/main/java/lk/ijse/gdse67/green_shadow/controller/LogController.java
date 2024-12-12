@@ -1,5 +1,6 @@
 package lk.ijse.gdse67.green_shadow.controller;
 
+import jakarta.annotation.security.RolesAllowed;
 import lk.ijse.gdse67.green_shadow.dto.LogDTO;
 import lk.ijse.gdse67.green_shadow.exception.DataPersistException;
 import lk.ijse.gdse67.green_shadow.exception.NotFoundException;
@@ -27,6 +28,7 @@ public class LogController {
     private final LogService logService;
     private final AppUtil appUtil;
 
+    @RolesAllowed({"MANAGER", "SCIENTIST"})
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> saveLog(
             @RequestPart("logDetail") String logDetail,
@@ -57,11 +59,13 @@ public class LogController {
         }
     }
 
+    @RolesAllowed({"MANAGER", "ADMINISTRATIVE", "SCIENTIST"})
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<LogDTO> getAllLog() {
         return logService.getAllLog();
     }
 
+    @RolesAllowed({"MANAGER", "SCIENTIST"})
     @PatchMapping(value = "/{logCode}",consumes ={ MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_OCTET_STREAM_VALUE})
     public ResponseEntity<Void> updateLog(
             @RequestPart("logDetail") String logDetail,
@@ -93,7 +97,7 @@ public class LogController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @RolesAllowed({"MANAGER", "SCIENTIST"})
     @DeleteMapping(value = "/{logCode}")
     public ResponseEntity<Void> deleteLog(@PathVariable("logCode") String logCode) {
         try{

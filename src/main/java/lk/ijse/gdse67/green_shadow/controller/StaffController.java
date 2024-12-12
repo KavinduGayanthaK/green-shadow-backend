@@ -1,4 +1,5 @@
 package lk.ijse.gdse67.green_shadow.controller;
+import jakarta.annotation.security.RolesAllowed;
 import lk.ijse.gdse67.green_shadow.dto.StaffDTO;
 import lk.ijse.gdse67.green_shadow.exception.DataPersistException;
 import lk.ijse.gdse67.green_shadow.exception.NotFoundException;
@@ -23,6 +24,7 @@ public class StaffController {
     private final StaffService staffService;
     private final AppUtil appUtil;
 
+    @RolesAllowed({"MANAGER", "ADMINISTRATIVE"})
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> saveStaff(@RequestBody StaffDTO staffDTO) {
         try{
@@ -38,12 +40,14 @@ public class StaffController {
         }
     }
 
+    @RolesAllowed({"MANAGER", "ADMINISTRATIVE", "SCIENTIST"})
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<StaffDTO> getAllStaff(){
             return staffService.getAllStaff();
 
     }
 
+    @RolesAllowed({"MANAGER", "ADMINISTRATIVE"})
     @PatchMapping(value = "/{staffId}",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateStaff(@RequestBody StaffDTO staffDTO,@PathVariable("staffId")String staffId) {
         System.out.println("Update staff : "+staffDTO);
@@ -59,6 +63,7 @@ public class StaffController {
         }
     }
 
+    @RolesAllowed({"MANAGER", "ADMINISTRATIVE"})
     @DeleteMapping(value = "/{staffId}")
     public ResponseEntity<Void> deleteStaff(@PathVariable("staffId") String staffId) {
 

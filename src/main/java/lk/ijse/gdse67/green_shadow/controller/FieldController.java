@@ -1,5 +1,6 @@
 package lk.ijse.gdse67.green_shadow.controller;
 
+import jakarta.annotation.security.RolesAllowed;
 import lk.ijse.gdse67.green_shadow.dto.FieldDTO;
 import lk.ijse.gdse67.green_shadow.exception.DataPersistException;
 import lk.ijse.gdse67.green_shadow.exception.NotFoundException;
@@ -27,6 +28,7 @@ public class FieldController {
     private final FieldService fieldService;
     private final AppUtil appUtil;
 
+    @RolesAllowed({"MANAGER", "SCIENTIST"})
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> saveField(
             @RequestPart("fieldName") String fieldName,
@@ -63,6 +65,7 @@ public class FieldController {
         }
     }
 
+    @RolesAllowed({"MANAGER", "SCIENTIST"})
     @PatchMapping(value = "/{fieldCode}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateField(
             @RequestPart("fieldName") String fieldName,
@@ -100,6 +103,7 @@ public class FieldController {
         }
     }
 
+    @RolesAllowed({"MANAGER", "ADMINISTRATIVE", "SCIENTIST"})
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllFields() {
         try{
@@ -112,7 +116,7 @@ public class FieldController {
     }
 
 
-
+    @RolesAllowed({"MANAGER", "SCIENTIST"})
     @DeleteMapping(value = "/{fieldCode}")
     public ResponseEntity<Void> deleteField(@PathVariable("fieldCode") String fieldCode) {
         try{
